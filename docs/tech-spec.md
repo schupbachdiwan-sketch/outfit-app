@@ -1,6 +1,6 @@
 # 技术规格书
 
-> 版本：v1.0 | 更新日期：2026-05-25
+> 版本：v1.1 | 更新日期：2026-06-01
 
 ---
 
@@ -9,12 +9,12 @@
 | 层级 | 技术选型 | 理由 |
 |------|---------|------|
 | 前端框架 | **Flutter** (Dart) | 一套代码双端运行，2D渲染性能优秀，社区活跃 |
-| 状态管理 | Riverpod / Bloc | 待Phase 1评估后确定 |
+| 状态管理 | **Riverpod** | 2026-06-01选定 |
 | 本地存储 | SQLite (sqflite) | 衣物元数据、分类标签等结构化数据 |
 | 本地文件 | 设备本地文件系统 | 衣物图片、身材照片等大文件 |
-| 云端同步 | Firebase Firestore / Supabase | 用户数据跨设备同步 |
-| 后端服务 | Supabase (BaaS) 或 Node.js + PostgreSQL | 优先Supabase降低运维成本 |
-| 认证 | Supabase Auth / Firebase Auth | 邮箱+第三方登录开箱即用 |
+| 云端同步 | **Supabase** | 用户数据跨设备同步 |
+| 后端服务 | **Supabase (BaaS)** | 2026-06-01选定，降低运维成本 |
+| 认证 | **Supabase Auth** | 邮箱+第三方登录开箱即用 |
 | AI抠图 | Remove.bg API / Segment Anything | 衣物去背景 |
 | AI试穿合成 | 待评估（Stable Diffusion / 自训练模型 / 第三方API） | 2D衣物贴合身材模板 |
 | AI推荐 | OpenAI API / 规则引擎 | 搭配推荐生成 |
