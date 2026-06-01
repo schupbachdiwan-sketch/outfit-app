@@ -53,7 +53,7 @@
 - [x] 实现主题系统（颜色、字体、间距）
 - [x] 实现底部Tab导航（4个Tab）
 - [x] 创建4个占位页面
-- [ ] 封装基础组件（按钮、卡片、输入框、加载态）
+- [x] 封装基础组件（AppButton、AppCard、EmptyState、SkeletonLoader）
 - [x] 实现路由配置
 
 ### 验证标准
