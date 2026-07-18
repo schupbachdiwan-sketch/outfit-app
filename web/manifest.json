@@ -1,11 +1,11 @@
 {
-    "name": "outfit_app",
-    "short_name": "outfit_app",
+    "name": "穿搭助手",
+    "short_name": "穿搭助手",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "穿搭辅助App - 虚拟试衣、AI搭配推荐、衣柜管理",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

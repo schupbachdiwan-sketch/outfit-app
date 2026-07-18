@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../features/fitting_room/fitting_room_page.dart';
 import '../../features/wardrobe/wardrobe_page.dart';
 import '../../features/inspiration/inspiration_page.dart';
 import '../../features/profile/profile_page.dart';
+import '../../features/poc/poc_test_page.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -28,6 +30,17 @@ class _AppShellState extends State<AppShell> {
         index: _currentIndex,
         children: _pages,
       ),
+      floatingActionButton: kDebugMode
+          ? FloatingActionButton.small(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const PocTestPage()),
+                );
+              },
+              tooltip: 'AI POC 测试',
+              child: const Icon(Icons.science_outlined, size: 20),
+            )
+          : null,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
