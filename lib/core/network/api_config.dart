@@ -16,7 +16,7 @@ class ApiConfig {
   /// - 生产: Supabase Edge Function URL (Phase B)
   static const String baseUrl = String.fromEnvironment(
     'AI_PROXY_URL',
-    defaultValue: 'http://localhost:8080',
+    defaultValue: 'https://outfit-app-production-14a1.up.railway.app',
   );
 
   /// 请求超时
