@@ -20,8 +20,8 @@ class ApiConfig {
   );
 
   /// 请求超时
-  static const Duration connectTimeout = Duration(seconds: 10);
-  static const Duration receiveTimeout = Duration(seconds: 30);
+  static const Duration connectTimeout = Duration(seconds: 60);
+  static const Duration receiveTimeout = Duration(seconds: 120);
 
   /// 本地代理 API 路径
   static const String healthPath = '/api/health';
