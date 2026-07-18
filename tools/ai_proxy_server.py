@@ -1,4 +1,4 @@
-﻿"""
+"""
 AI 代理服务器 — v0.6.2
 功能：
   GET  /api/health            → 健康检查 + API Key 验证
@@ -69,7 +69,14 @@ import requests as sync_requests
 # ── FastAPI ────────────────────────────────────────────────
 
 app = FastAPI(title="OutfitApp AI Proxy", version="0.6.2")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+)
 
 # ── 配置 ──────────────────────────────────────────────────
 
@@ -922,7 +929,7 @@ if __name__ == "__main__":
         print("  [WARN] DASHSCOPE_API_KEY 未配置！")
     print("=" * 58)
 
-    uvicorn.run(app, host=args.host, port=args.port, log_level="info")
+    uvicorn.run(app, host=args.host, port=args.port, log_level="info", timeout_keep_alive=120)
 
 
 
