@@ -3,7 +3,6 @@
     "builder": "nixpacks"
   },
   "deploy": {
-    "startCommand": "pip install -r tools/requirements.txt && python tools/ai_proxy_server.py --host 0.0.0.0 --port $PORT",
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 300
   }
