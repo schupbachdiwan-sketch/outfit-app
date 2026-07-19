@@ -14,7 +14,7 @@ COPY lib/ ./lib/
 COPY web/ ./web/
 
 # Build Flutter Web (Release mode)
-RUN flutter build web --release --dart-define=AI_PROXY_URL= --no-tree-shake-icons 2>&1
+RUN flutter build web --release --dart-define=AI_PROXY_URL= --no-tree-shake-icons
 RUN ls -la build/web/
 
 # === Stage 2: Python AI Server ===
