@@ -1,11 +1,12 @@
 """
-AI 代理服务器 — v0.6.2
+AI 代理服务器 — v0.7.0
 功能：
   GET  /api/health            → 健康检查 + API Key 验证
   POST /api/remove-bg          → rembg 抠图，返回透明 PNG（兼容 JSON/multipart）
   POST /api/enhance-clothing   → 衣服AI增强（rembg抠图→白底合成→Wan2.7产品图）
   POST /api/generate-model     → 身体AI模特化（双模式：拍照img2img + 手动t2i）
   POST /api/try-on             → 虚拟试衣（可选身体预处理→DashScope OSS→异步API→轮询→返回）
+  GET  /*                      → Flutter Web 静态文件（SPA 路由）
 
 generate-model 双模式：
   📷 拍照模式（提供 image + gender + height + weight）：
@@ -15,6 +16,7 @@ generate-model 双模式：
 
 启动方式：
   python tools/ai_proxy_server.py --port 8080
+  python tools/ai_proxy_server.py --port 10000 --static-dir ./build/web  # 托管 Flutter Web
 
 环境变量（支持 .env 文件）：
   DASHSCOPE_API_KEY  阿里云 DashScope API Key（必须）
@@ -26,6 +28,7 @@ import io
 import os
 import sys
 import time
+from pathlib import Path
 
 # ── Windows UTF-8 编码修复 ──────────────────────────────────
 if sys.platform == "win32":
@@ -33,12 +36,12 @@ if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8")
     except Exception:
         pass
-from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from PIL import Image
 
@@ -66,9 +69,17 @@ load_dotenv()
 
 import requests as sync_requests
 
+# ── 命令行参数解析 ─────────────────────────────────────────
+
+parser = argparse.ArgumentParser(description="OutfitApp AI Proxy Server")
+parser.add_argument("--host", default="0.0.0.0")
+parser.add_argument("--port", type=int, default=8080)
+parser.add_argument("--static-dir", help="Path to Flutter Web static files")
+args, _ = parser.parse_known_args()
+
 # ── FastAPI ────────────────────────────────────────────────
 
-app = FastAPI(title="OutfitApp AI Proxy", version="0.6.2")
+app = FastAPI(title="OutfitApp AI Proxy", version="0.7.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -77,6 +88,41 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
+
+# ── 静态文件服务（Flutter Web）────────────────────────────
+
+def setup_static_files(static_dir: str | None = None):
+    """设置静态文件服务"""
+    if not static_dir:
+        return
+
+    static_path = Path(static_dir)
+    if not static_path.exists():
+        print(f"  [WARN] Static directory not found: {static_dir}")
+        return
+
+    # 服务 Flutter Web 的静态资源
+    app.mount("/assets", StaticFiles(directory=str(static_path / "assets")), name="assets")
+
+    # 对于其他路径，返回 index.html（SPA 路由）
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        # 如果是 API 路径，跳过
+        if full_path.startswith("api/"):
+            raise HTTPException(404, "API endpoint not found")
+
+        # 尝试提供静态文件
+        file_path = static_path / full_path
+        if file_path.is_file():
+            return FileResponse(str(file_path))
+
+        # 否则返回 index.html（SPA 路由）
+        return FileResponse(str(static_path / "index.html"))
+
+    print(f"  [OK]  Static files: {static_dir}")
+
+# 设置静态文件
+setup_static_files(args.static_dir)
 
 # ── 配置 ──────────────────────────────────────────────────
 
@@ -903,13 +949,8 @@ async def shutdown():
 # ── 入口 ──────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="OutfitApp AI Proxy Server")
-    parser.add_argument("--host", default="0.0.0.0")
-    parser.add_argument("--port", type=int, default=8080)
-    args = parser.parse_args()
-
     print("=" * 58)
-    print("  OutfitApp AI Proxy Server  v0.6.2")
+    print("  OutfitApp AI Proxy Server  v0.7.0")
     print("=" * 58)
     print(f"  Listening: http://{args.host}:{args.port}")
     print(f"  Endpoints:")
@@ -918,6 +959,8 @@ if __name__ == "__main__":
     print(f"    POST /api/enhance-clothing   衣服AI增强 (rembg + Wan2.7)")
     print(f"    POST /api/generate-model     身体AI模特化 (rembg+Wan2.7)")
     print(f"    POST /api/try-on             虚拟试衣 (可选preprocess_body)")
+    if args.static_dir:
+        print(f"    GET  /*                      Flutter Web 静态文件")
     print("-" * 58)
 
     if DASHSCOPE_API_KEY:
