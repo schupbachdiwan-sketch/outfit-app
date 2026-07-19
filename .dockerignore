@@ -8,9 +8,6 @@ ios/
 linux/
 macos/
 windows/
-web/
-lib/
-test/
 node_modules/
 *.md
 *.png
@@ -21,5 +18,7 @@ node_modules/
 netlify.toml
 nixpacks.toml
 runtime.txt
-pubspec.yaml
-pubspec.lock
+test/
+dartpad/
+chrome-device/
+.claude/
