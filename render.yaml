@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: outfit-ai-server
+    runtime: docker
+    region: singapore  # 离中国最近的免费区
+    plan: free
+    envVars:
+      - key: DASHSCOPE_API_KEY
+        sync: false  # 部署后手动填入
+      - key: PORT
+        value: "9000"
