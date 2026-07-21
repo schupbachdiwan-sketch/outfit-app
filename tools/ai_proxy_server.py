@@ -89,6 +89,23 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
+
+# ── 全局异常处理器：返回详细错误信息 ──────────────────────
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    import traceback
+    error_detail = traceback.format_exc()
+    print(f"  [GLOBAL ERROR] {error_detail}")
+    return JSONResponse(
+        status_code=500,
+        content={
+            "success": False,
+            "error": str(exc),
+            "type": type(exc).__name__,
+            "detail": error_detail,
+        },
+    )
+
 # ── 静态文件服务（Flutter Web）────────────────────────────
 
 def setup_static_files(static_dir: str | None = None):
