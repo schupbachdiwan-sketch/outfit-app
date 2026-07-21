@@ -583,9 +583,14 @@ async def preprocess_body_image(
         refined_bytes = await call_wan27_img2img(clean_bytes, prompt)
         print(f"  [preprocess] Wan2.7 output: {len(refined_bytes)} bytes")
         return refined_bytes
-    except HTTPException:
+    except HTTPException as e:
         # Wan2.7 失败时回退到 rembg-only 结果
-        print("  [preprocess] Wan2.7 failed, falling back to rembg-only result")
+        print(f"  [preprocess] Wan2.7 failed: {e}, falling back to rembg-only result")
+        return clean_bytes
+    except Exception as e:
+        print(f"  [preprocess] Wan2.7 exception: {e}, falling back to rembg-only result")
+        import traceback
+        traceback.print_exc()
         return clean_bytes
 
 
@@ -841,6 +846,9 @@ async def generate_model(req: GenerateModelRequest):
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
+        print(f"  [ERROR] generate-model failed: {e}")
+        traceback.print_exc()
         raise HTTPException(502, f"模特生成异常: {e}")
 
     elapsed = time.time() - t0
