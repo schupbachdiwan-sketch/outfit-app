@@ -121,9 +121,6 @@ def setup_static_files(static_dir: str | None = None):
 
     print(f"  [OK]  Static files: {static_dir}")
 
-# 设置静态文件
-setup_static_files(args.static_dir)
-
 # ── 配置 ──────────────────────────────────────────────────
 
 DASHSCOPE_API_KEY = os.environ.get("DASHSCOPE_API_KEY", "")
@@ -944,6 +941,10 @@ async def shutdown():
     global _session
     if _session and not _session.closed:
         await _session.close()
+
+
+# ── 静态文件服务（必须在所有 API 路由之后）──────────────────
+setup_static_files(args.static_dir)
 
 
 # ── 入口 ──────────────────────────────────────────────────
